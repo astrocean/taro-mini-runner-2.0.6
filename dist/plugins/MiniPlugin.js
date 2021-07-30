@@ -150,6 +150,7 @@ class MiniPlugin {
         })));
         compiler.hooks.watchRun.tapAsync(PLUGIN_NAME, this.tryAsync((compiler) => __awaiter(this, void 0, void 0, function* () {
             const changedFiles = this.getChangedFiles(compiler);
+            this.changedFiles=changedFiles;
             if (!changedFiles.length) {
                 yield this.run(compiler);
             }
@@ -201,6 +202,8 @@ class MiniPlugin {
         compiler.hooks.emit.tapAsync(PLUGIN_NAME, this.tryAsync((compilation) => __awaiter(this, void 0, void 0, function* () {
             compilation.errors = compilation.errors.concat(this.errors);
             yield this.generateMiniFiles(compilation);
+            this.emited=true;
+            this.changedFiles=[];
             this.addedComponents.clear();
         })));
         compiler.hooks.afterEmit.tapAsync(PLUGIN_NAME, this.tryAsync((compilation) => __awaiter(this, void 0, void 0, function* () {
@@ -760,6 +763,9 @@ depComponents = depComponents.filter(item => !/^(plugin|dynamicLib|plugin-privat
         const { buildAdapter } = this.options;
         const isQuickApp = buildAdapter === "quickapp" /* QUICKAPP */;
         Object.keys(taroFileTypeMap).forEach(item => {
+            if(this.emited&&!this.changedFiles.includes(item)){
+                return;
+            }
             const relativePath = this.getRelativePath(item);
             const extname = path.extname(item);
             const jsonPath = relativePath.replace(extname, constants_1.MINI_APP_FILES[buildAdapter].CONFIG).replace(/\\/g, '/').replace(/^\//, '');

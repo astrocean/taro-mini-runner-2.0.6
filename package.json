@@ -1,69 +1,10 @@
 {
-  "_args": [
-    [
-      "@tarojs/mini-runner@2.0.6",
-      "/Users/astr/Documents/workspace/mqj-mp-h5"
-    ]
-  ],
-  "_development": true,
   "_from": "@tarojs/mini-runner@2.0.6",
   "_id": "@tarojs/mini-runner@2.0.6",
   "_inBundle": false,
   "_integrity": "sha1-XNNMTpSBbrlp7XIrDRabEVTpqmA=",
   "_location": "/@tarojs/mini-runner",
-  "_phantomChildren": {
-    "@webassemblyjs/helper-module-context": "1.8.5",
-    "@webassemblyjs/wast-parser": "1.8.5",
-    "@xtuc/ieee754": "1.2.0",
-    "@xtuc/long": "4.2.2",
-    "ajv": "6.12.6",
-    "ajv-errors": "1.0.1",
-    "ajv-keywords": "3.5.2",
-    "babel-macros": "1.2.0",
-    "babel-register": "6.26.0",
-    "babylon": "6.18.0",
-    "buffer-from": "1.1.1",
-    "cacache": "12.0.4",
-    "chalk": "2.4.2",
-    "chrome-trace-event": "1.0.2",
-    "cli-cursor": "2.1.0",
-    "commondir": "1.0.1",
-    "errno": "0.1.8",
-    "esrecurse": "4.3.0",
-    "estraverse": "4.3.0",
-    "globby": "7.1.1",
-    "graceful-fs": "4.2.6",
-    "is-core-module": "2.2.0",
-    "is-extglob": "2.1.1",
-    "is-glob": "4.0.1",
-    "json-parse-better-errors": "1.0.2",
-    "jsonfile": "4.0.0",
-    "loader-runner": "2.4.0",
-    "loader-utils": "1.4.0",
-    "log-symbols": "2.2.0",
-    "memory-fs": "0.4.1",
-    "micromatch": "3.1.10",
-    "minimatch": "3.0.4",
-    "mkdirp": "0.5.5",
-    "neo-async": "2.6.2",
-    "node-libs-browser": "2.2.1",
-    "normalize-path": "3.0.0",
-    "object-assign": "4.1.1",
-    "path-dirname": "1.0.2",
-    "path-exists": "3.0.0",
-    "path-parse": "1.0.6",
-    "readable-stream": "2.3.7",
-    "require-from-string": "2.0.2",
-    "serialize-javascript": "4.0.0",
-    "sort-keys": "1.1.2",
-    "strict-uri-encode": "1.1.0",
-    "universalify": "0.1.2",
-    "watchpack": "1.7.5",
-    "wcwidth": "1.0.1",
-    "webpack-log": "2.0.0",
-    "webpack-sources": "1.4.3",
-    "worker-farm": "1.7.0"
-  },
+  "_phantomChildren": {},
   "_requested": {
     "type": "version",
     "registry": true,
@@ -76,17 +17,20 @@
     "fetchSpec": "2.0.6"
   },
   "_requiredBy": [
-    "#DEV:/"
+    "#USER",
+    "/"
   ],
-  "_resolved": "https://registry.npm.taobao.org/@tarojs/mini-runner/download/@tarojs/mini-runner-2.0.6.tgz",
-  "_spec": "2.0.6",
-  "_where": "/Users/astr/Documents/workspace/mqj-mp-h5",
+  "_resolved": "https://registry.nlark.com/@tarojs/mini-runner/download/@tarojs/mini-runner-2.0.6.tgz",
+  "_shasum": "5cd34c4e94816eb969ed722b0d169b1154e9aa60",
+  "_spec": "@tarojs/mini-runner@2.0.6",
+  "_where": "/Users/astr/Documents/workspace/temp",
   "author": {
     "name": "luckyadam"
   },
   "bugs": {
     "url": "https://github.com/NervJS/taro/issues"
   },
+  "bundleDependencies": false,
   "dependencies": {
     "@tarojs/runner-utils": "2.0.6",
     "@tarojs/taro": "2.0.6",
@@ -132,6 +76,7 @@
     "webpack-format-messages": "^2.0.5",
     "yauzl": "2.10.0"
   },
+  "deprecated": false,
   "description": "Mini app runner for taro",
   "devDependencies": {
     "@types/babel-core": "^6.25.6",
