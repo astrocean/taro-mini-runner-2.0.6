@@ -132,6 +132,7 @@ class MiniPlugin {
         this.pageComponentsDependenciesMap = new Map();
         this.dependencies = new Map();
         this.quickappImports = new Map();
+        this.removedTaroFileTypeMap={};
     }
     apply(compiler) {
         this.context = compiler.context;
@@ -149,14 +150,51 @@ class MiniPlugin {
             }).apply(compiler);
         })));
         compiler.hooks.watchRun.tapAsync(PLUGIN_NAME, this.tryAsync((compiler) => __awaiter(this, void 0, void 0, function* () {
+            this.removedTaroFileTypeMap={};
             const changedFiles = this.getChangedFiles(compiler);
             this.changedFiles=changedFiles;
+            this.removedFiles=this.getRemovedFiles(compiler);
             if (!changedFiles.length) {
                 yield this.run(compiler);
             }
             else {
                 yield this.watchRun(compiler, changedFiles);
             }
+            this.removedFiles.forEach((filePath) => {
+                this.removedTaroFileTypeMap[filePath]=taroFileTypeMap[filePath];
+                //删除tarominiPlugin中的引用
+                delete taroFileTypeMap[filePath];
+                this.dependencies.delete(filePath);
+            });
+            
+            // this.pageComponentsDependenciesMap=Map;
+            // {
+            //     [filePath]:Set([
+            //         componentObj,
+            //         {
+            //         name: componentName,
+            //         path: componentPath,
+            //         isNative,
+            //         stylePath: isNative ? this.getStylePath(componentPath) : null,
+            //         templatePath: isNative ? this.getTemplatePath(componentPath) : null
+            //     }])
+            // }
+            if(this.removedFiles.length>0){
+                this.pageComponentsDependenciesMap.forEach((componentList,parentComponentPath,map)=>{
+                    if(this.removedFiles.includes(parentComponentPath)){
+                        this.pageComponentsDependenciesMap.delete(parentComponentPath);
+                        return;
+                    }
+                    let matchedComponentList=[...componentList].filter((component)=>{
+                        return this.removedFiles.includes(component.path);
+                    });
+                    matchedComponentList.forEach((item)=>{
+                        componentList.delete(item);
+                    });
+                });
+            }
+            
+             
             new TaroLoadChunksPlugin_1.default({
                 commonChunks: this.options.commonChunks,
                 buildAdapter: this.options.buildAdapter,
@@ -220,6 +258,16 @@ class MiniPlugin {
         const watcher = watchFileSystem.watcher || watchFileSystem.wfs.watcher;
         return Object.keys(watcher.mtimes);
     }
+    getRemovedFiles(compiler){
+        let files=[];
+        compiler.removedFiles.forEach((item) => {
+            if (constants_1.REG_SCRIPTS.test(item)) {
+                files.push(item);
+            }
+        });
+        return files;
+    }
+   
     getAppEntry(compiler) {
         const { entry } = compiler.options;
         if (this.options.isBuildPlugin) {
