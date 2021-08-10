@@ -437,9 +437,10 @@ class MiniPlugin {
     }
     getSubPackages(appConfig) {
         const subPackages = appConfig.subPackages || appConfig['subpackages'];
+        const ignoreCompileSubpackages=this.options.ignoreCompileSubpackages||[];
         if (subPackages && subPackages.length) {
             subPackages.forEach(item => {
-                if (item.pages && item.pages.length) {
+                if (item.pages && item.pages.length&&!ignoreCompileSubpackages.includes(item.root)) {
                     const root = item.root;
                     item.pages.forEach(page => {
                         let pageItem = `${root}/${page}`;

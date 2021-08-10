@@ -47,6 +47,7 @@ exports.default = (appPath, mode, config) => {
         customCommonChunks = commonChunks;
     }
     plugin.miniPlugin = chain_1.getMiniPlugin({
+        ignoreCompileSubpackages:config.ignoreCompileSubpackages||[],
         sourceDir,
         outputDir,
         buildAdapter,
