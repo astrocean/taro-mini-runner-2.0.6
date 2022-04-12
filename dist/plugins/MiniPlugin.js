@@ -29,6 +29,9 @@ const template_rewriter_1 = require("../quickapp/template-rewriter");
 const TaroLoadChunksPlugin_1 = require("./TaroLoadChunksPlugin");
 const TaroNormalModulesPlugin_1 = require("./TaroNormalModulesPlugin");
 const MiniLoaderPlugin_1 = require("./MiniLoaderPlugin");
+const {
+    SyncWaterfallHook
+} = require('tapable');
 const PLUGIN_NAME = 'MiniPlugin';
 let taroFileTypeMap = {};
 const quickappCommonStyle = 'common';
@@ -119,6 +122,9 @@ class MiniPlugin {
             isBuildPlugin: false,
             alias: {}
         });
+        this.hooks={
+            beforeGenerate:new SyncWaterfallHook(['code','isRoot'])
+        };
         this.sourceDir = this.options.sourceDir;
         this.outputDir = this.options.outputDir;
         this.pages = new Set();
@@ -641,6 +647,7 @@ class MiniPlugin {
                 let taroSelfComponents;
                 let depComponents;
                 let code = fs.readFileSync(file.path).toString();
+                code=this.hooks.beforeGenerate.call(code,isRoot);
                 if (isNative) {
                     const configPath = this.getConfigPath(file.path);
                     if (fs.existsSync(configPath)) {
