@@ -15,6 +15,7 @@ class TaroLoadChunksPlugin {
         this.pages = options.pages;
         this.depsMap = options.depsMap;
         this.sourceDir = options.sourceDir;
+        this.subPackages = options.subPackages || new Set();
     }
     apply(compiler) {
         const pagesList = this.pages;
@@ -39,8 +40,16 @@ class TaroLoadChunksPlugin {
                                         const depsComponents = getAllDepComponents(entryModule.resource, depsMap);
                                         depsComponents.forEach(component => {
                                             const id = component.path.replace(this.sourceDir + path.sep, '').replace(path.extname(component.path), '').replace(/\\{1,}/g, '/');
-                                            const oriDep = fileChunks.get(id) || [];
-                                            fileChunks.set(id, Array.from(new Set([...oriDep, ...depChunks])));
+                                            let needAddChunks = false;
+                                            this.subPackages.forEach(item => {
+                                                if (component.path.indexOf(path.join(this.sourceDir, item)) >= 0) {
+                                                    needAddChunks = true;
+                                                }
+                                            });
+                                            if (needAddChunks) {
+                                                const oriDep = fileChunks.get(id) || [];
+                                                fileChunks.set(id, Array.from(new Set([...oriDep, ...depChunks])));
+                                            }
                                         });
                                     }
                                 }
@@ -124,10 +133,17 @@ function getAllDepComponents(filePath, depsMap) {
 }
 function addRequireToSource(id, modules, commonChunks) {
     const source = new webpack_sources_1.ConcatSource();
+    let hasAdd = false;
     commonChunks.forEach(chunkItem => {
-        source.add(`require(${JSON.stringify(utils_1.promoteRelativePath(path.relative(id, chunkItem.name)))});\n`);
+        const val = `require(${JSON.stringify(utils_1.promoteRelativePath(path.relative(id, chunkItem.name)))});\n`;
+        if (!modules.children.some(item => typeof item === 'string' && item.indexOf(val) >= 0)) {
+            source.add(val);
+            hasAdd = true;
+        }
     });
-    source.add('\n');
+    if (hasAdd) {
+        source.add('\n');
+    }
     source.add(modules);
     source.add(';');
     return source;

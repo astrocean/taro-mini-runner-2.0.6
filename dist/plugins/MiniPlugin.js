@@ -138,6 +138,7 @@ class MiniPlugin {
         this.pageComponentsDependenciesMap = new Map();
         this.dependencies = new Map();
         this.quickappImports = new Map();
+        this.subPackages = new Set();
         this.removedTaroFileTypeMap={};
     }
     apply(compiler) {
@@ -152,7 +153,8 @@ class MiniPlugin {
                 addChunkPages: this.options.addChunkPages,
                 pages: this.pages,
                 depsMap: this.pageComponentsDependenciesMap,
-                sourceDir: this.sourceDir
+                sourceDir: this.sourceDir,
+                subPackages: this.subPackages
             }).apply(compiler);
         })));
         compiler.hooks.watchRun.tapAsync(PLUGIN_NAME, this.tryAsync((compiler) => __awaiter(this, void 0, void 0, function* () {
@@ -208,7 +210,8 @@ class MiniPlugin {
                 addChunkPages: this.options.addChunkPages,
                 pages: this.pages,
                 depsMap: this.pageComponentsDependenciesMap,
-                sourceDir: this.sourceDir
+                sourceDir: this.sourceDir,
+                subPackages: this.subPackages
             }).apply(compiler);
         })));
         compiler.hooks.make.tapAsync(PLUGIN_NAME, (compilation, callback) => {
@@ -227,7 +230,6 @@ class MiniPlugin {
             compilation.hooks.afterOptimizeAssets.tap(PLUGIN_NAME, (assets) => {
                 Object.keys(assets).forEach(assetPath => {
                     const styleExt = constants_1.MINI_APP_FILES[this.options.buildAdapter].STYLE;
-                    const templateExt = constants_1.MINI_APP_FILES[this.options.buildAdapter].TEMPL;
                     if (new RegExp(`${styleExt}.js$`).test(assetPath)) {
                         delete assets[assetPath];
                     }
@@ -235,9 +237,6 @@ class MiniPlugin {
                         const assetObj = assets[assetPath];
                         const newAssetPath = assetPath.replace(styleExt, '');
                         assets[newAssetPath] = assetObj;
-                        delete assets[assetPath];
-                    }
-                    else if (new RegExp(`${templateExt}.js$`).test(assetPath)) {
                         delete assets[assetPath];
                     }
                 });
@@ -448,6 +447,7 @@ class MiniPlugin {
             subPackages.forEach(item => {
                 if (item.pages && item.pages.length&&!ignoreCompileSubpackages.includes(item.root)) {
                     const root = item.root;
+                    this.subPackages.add(root);
                     item.pages.forEach(page => {
                         let pageItem = `${root}/${page}`;
                         pageItem = pageItem.replace(/\/{2,}/g, '/');
