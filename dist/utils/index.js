@@ -9,7 +9,7 @@ const chalk_1 = require("chalk");
 const constants_1 = require("./constants");
 exports.isNodeModule = (filename) => constants_1.NODE_MODULES_REG.test(filename);
 function isNpmPkg(name) {
-    if (/^(\.|\/)/.test(name)) {
+    if (/^(\.|\/|([a-zA-Z]:))/.test(name)) {
         return false;
     }
     return true;
