@@ -123,7 +123,7 @@ class MiniPlugin {
             alias: {}
         });
         this.hooks={
-            beforeGenerate:new SyncWaterfallHook(['code','isRoot'])
+            beforeGenerate:new SyncWaterfallHook(['code','isRoot','filePath'])
         };
         this.sourceDir = this.options.sourceDir;
         this.outputDir = this.options.outputDir;
@@ -647,7 +647,7 @@ class MiniPlugin {
                 let taroSelfComponents;
                 let depComponents;
                 let code = fs.readFileSync(file.path).toString();
-                code=this.hooks.beforeGenerate.call(code,isRoot);
+                code=this.hooks.beforeGenerate.call(code,isRoot,file.path);
                 if (isNative) {
                     const configPath = this.getConfigPath(file.path);
                     if (fs.existsSync(configPath)) {
