@@ -740,7 +740,8 @@ depComponents = depComponents.filter(item => !/^(plugin|dynamicLib|plugin-privat
                     const componentsList = new Set();
                     depComponents.forEach(item => {
                         const componentPath = utils_1.resolveScriptPath(path.resolve(path.dirname(file.path), item.path));
-                        if (fs.existsSync(componentPath) && !Array.from(this.components).some(item => item.path === componentPath)) {
+                        if (fs.existsSync(componentPath)) {
+                            const componentIsGeted= Array.from(this.components).some(item => item.path === componentPath);
                             const componentName = this.getComponentName(componentPath);
                             const componentTempPath = this.getTemplatePath(componentPath);
                             const isNative = this.isNativePageOrComponent(componentTempPath, fs.readFileSync(componentPath).toString());
@@ -751,11 +752,15 @@ depComponents = depComponents.filter(item => !/^(plugin|dynamicLib|plugin-privat
                                 stylePath: isNative ? this.getStylePath(componentPath) : null,
                                 templatePath: isNative ? this.getTemplatePath(componentPath) : null
                             };
-                            this.components.add(componentObj);
-                            this.addedComponents.add(componentObj);
+                            if(!componentIsGeted){
+                                this.components.add(componentObj);
+                                this.addedComponents.add(componentObj);
+                            }
                             componentsList.add(componentObj);
                             this.pageComponentsDependenciesMap.set(file.path, componentsList);
-                            this.getComponents(compiler, new Set([componentObj]), false);
+                            if(!componentIsGeted){
+                                this.getComponents(compiler, new Set([componentObj]), false);
+                            }
                         }
                     });
                 }
