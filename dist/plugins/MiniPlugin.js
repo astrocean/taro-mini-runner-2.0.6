@@ -123,7 +123,9 @@ class MiniPlugin {
             alias: {}
         });
         this.hooks={
-            beforeGenerate:new SyncWaterfallHook(['code','isRoot','filePath'])
+            beforeGenerate:new SyncWaterfallHook(['code','isRoot','filePath']),
+            beforeGetPages:new SyncWaterfallHook(['configObj']),
+            beforeAddEntry:new SyncWaterfallHook(['entryPath','entryName']),
         };
         this.sourceDir = this.options.sourceDir;
         this.outputDir = this.options.outputDir;
@@ -497,6 +499,7 @@ class MiniPlugin {
             if (!appPages || appPages.length === 0) {
                 throw new Error('缺少页面');
             }
+            this.hooks.beforeGetPages.call(configObj);
             if (!this.isWatch) {
                 utils_1.printLog("compile" /* COMPILE */, '发现入口', this.getShowPath(appEntry));
             }
@@ -776,6 +779,13 @@ depComponents = depComponents.filter(item => !/^(plugin|dynamicLib|plugin-privat
         });
     }
     addEntry(compiler, entryPath, entryName, entryType) {
+        entryPath=this.hooks.beforeAddEntry.call(entryPath,entryName);
+        if(!entryPath){
+            if (!this.isWatch) {
+                utils_1.printLog("compile" /* COMPILE */, '跳过addEntry', this.getShowPath(entryPath));
+            }
+            return;
+        }
         let dep;
         if (this.dependencies.has(entryPath)) {
             dep = this.dependencies.get(entryPath);
